@@ -26,7 +26,7 @@ cp target/fix-extracter-updates-*.jar $ALF_HOME/modules/platform/
 Upon startup you should see:
 
 ```
-INFO  Module 'fix-extracter-updates' overriding bean 'extracter.Asynchronous'
+INFO  [repo.module.ModuleServiceImpl] [main] Installing module 'fix-extracter-updates' version 1.0.0.
 ```
 
 That’s it – the patch is active.
