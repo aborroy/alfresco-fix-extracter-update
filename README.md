@@ -8,14 +8,19 @@ This repository ships a drop‑in **JAR module** that transparently overrides Al
 
 If updating a file does not trigger the `extract-metadata` action on the new content, you need to apply this patch.
 
+The patch applies to the following Share UI actions:
+
+* `Edit in Alfresco Share`: Opens the document metadata form in Share for editing with content field
+* `Upload New Version`: Replaces the current file with a newly uploaded version
+
 
 ## Quick start
 
 ```bash
 # 1. Clone and build
-git clone https://github.com/your‑org/fix-extracter-updates.git
+git clone https://github.com/aborroy/alfresco-fix-extracter-update.git
 cd fix-extracter-updates
-mvn clean package -DskipTests      # requires JDK 11+
+mvn clean package -DskipTests 
 
 # 2. Copy the resulting JAR into Alfresco
 cp target/fix-extracter-updates-*.jar $ALF_HOME/modules/platform/
@@ -23,20 +28,22 @@ cp target/fix-extracter-updates-*.jar $ALF_HOME/modules/platform/
 # 3. Restart Alfresco
 ```
 
+> Alternatively `fix-extracter-updates-*.jar` can be copied to `$ALF_HOME/webapps/alfresco/WEB-INF/lib` folder
+
 Upon startup you should see:
 
 ```
-INFO  [repo.module.ModuleServiceImpl] [main] Installing module 'fix-extracter-updates' version 1.0.0.
+INFO  [repo.module.ModuleServiceImpl] [main] Installing module 'fix-extracter-updates' version 1.1.0.
 ```
 
-That’s it – the patch is active.
+That’s it, the patch is active.
 
 ## Deployment options
 
 ### Local Tomcat install
 
-2. Drop the built JAR to `modules/platform/`
-3. Restart Tomcat
+1. Drop the built JAR to `modules/platform/` or `webapps/alfresco/WEB-INF/lib`
+2. Restart Tomcat
 
 ### Docker Compose
 
