@@ -40,4 +40,11 @@
         </property>
     </bean>
 
+    <bean id="extractOnNewVersionBehaviour"
+          class="org.alfresco.repo.behaviours.ExtractOnNewVersionBehaviour"
+          init-method="init">
+        <property name="policyComponent" ref="policyComponent"/>
+        <property name="actionService" ref="ActionService"/>
+    </bean>
+
 </beans>

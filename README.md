@@ -1,18 +1,24 @@
-# Asynchronous Extractor Patch (MNT‑25250)
+# Asynchronous Extractor Patch (MNT-25250)
 
 > Fix for Alfresco Content Services 7.x / 23.x / 25.x that prevents lost or incomplete metadata updates when the legacy `extracter.Asynchronous` bean processes file updatings.
 
-This repository ships a drop‑in **JAR module** that transparently overrides Alfresco’s default asynchronous metadata extractor with an improved implementation (`EnhancedAsynchronousExtractor`) delivered under Hyland ticket **MNT‑25250**.
+This repository ships a drop-in **JAR module** that transparently overrides Alfresco’s default asynchronous metadata extractor with an improved implementation (`EnhancedAsynchronousExtractor`) delivered under Hyland ticket **MNT-25250**.
 
 ## When you need this patch
 
 If updating a file does not trigger the `extract-metadata` action on the new content, you need to apply this patch.
 
-The patch applies to the following Share UI actions:
+The patch applies to the following Alfresco operations and clients:
 
-* `Edit in Alfresco Share`: Opens the document metadata form in Share for editing with content field
-* `Upload New Version`: Replaces the current file with a newly uploaded version
+### Share UI actions
+* **Edit in Alfresco Share** — opens the document metadata form in Share for editing with content field  
+* **Upload New Version** — replaces the current file with a newly uploaded version
 
+### CMIS operations
+* **CMIS check-in / check-out** — ensures `extract-metadata` is executed after a new version is created via CMIS clients such as **CMIS Workbench**  
+* This is handled by the new `ExtractOnNewVersionBehaviour` class, which binds to the `AfterCreateVersion` policy so that metadata extraction runs even when updates occur through CMIS instead of Share or REST.
+
+Together, the asynchronous extractor and version behaviour ensure **consistent metadata extraction** across all upload and update paths (Share, ADF, CMIS, REST, WebDAV).
 
 ## Quick start
 
@@ -66,9 +72,21 @@ Simply remove the JAR and restart Alfresco:
 rm $ALF_HOME/modules/platform/fix-extracter-updates-*.jar
 ```
 
-Because the patch only overrides a Spring bean, no repository data is modified.
+Because the patch only overrides Spring beans and adds a lightweight repository behaviour, **no repository data or configuration is modified**.
+
+## Technical details
+
+The patch introduces two complementary components:
+
+1. **EnhancedAsynchronousExtractor**
+   Replaces Alfresco’s legacy `extracter.Asynchronous` bean to guarantee correct metadata extraction after content updates.
+
+2. **ExtractOnNewVersionBehaviour**
+   New behaviour bound to the `AfterCreateVersion` policy (`cm:content`) that triggers metadata extraction when a new version is created — closing the gap for CMIS and other versioning workflows.
+
+These improvements ensure that the `extract-metadata` action always executes once per new content stream, regardless of how the content is uploaded or updated.
 
 ## Support
 
-This patch is provided **as‑is**.
-For commercial support open a Hyland ticket quoting **MNT‑25250** or contact `support@hyland.com`.
+This patch is provided **as-is**.
+For commercial support open a Hyland ticket quoting **MNT-25250** or contact `support@hyland.com`.
